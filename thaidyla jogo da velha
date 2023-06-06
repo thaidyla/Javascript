@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joguinho da velhinha</title>
+    <link rel="stylesheet" href="./css/velha.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <header>
+
+            <div class="painel-opcoes esconder">
+
+                <div class="painel-group">
+                    <span id="painel-usuario-x-nome"></span>   
+                    <span class="pontos">Pontos: <strong id="painel-usuario-x-pontos">0</strong></span>
+                </div>
+
+                <div class="painel-group">
+                    <span id="painel-usuario-o-nome"></span>
+                    <span class="pontos"> Pontos: <strong id="painel-usuario-o-pontos">0</strong></span>
+                </div>
+
+                <div class="proximo-jogar">
+                    <em><span>Próximo a jogar:</span> <strong id="proximo-jogador"></strong></em>
+                </div>
+
+            </div>
+
+            <div class="opcoes-jogo">
+                
+                <div class="header-group">
+                    <label for="usuario-x">Usuario X</label>
+                    <input autocomplete="off" id="usuario-x" type="text">
+                </div>
+    
+                <div class="header-group">
+                    <label for="usuario-o">Usuario O</label>
+                    <input autocomplete="off" id="usuario-o" type="text">
+                </div>
+
+                <button id="btn-jogar">Jogar</button>
+   
+            </div>
+  
+        </header>
+        
+        <div class="jogo-velha-1" ></div>
+        <div class="jogo-velha-2" ></div>
+        <div class="jogo-velha-3" ></div>
+        <div class="jogo-velha-4" ></div>
+        <div class="jogo-velha-5" ></div>
+        <div class="jogo-velha-6" ></div>
+        <div class="jogo-velha-7" ></div>
+        <div class="jogo-velha-8" ></div>
+        <div class="jogo-velha-9" ></div>
+
+        <footer> 
+            <em>
+             
+            </em> 
+        </footer>
+    </div>
+
+    <script src="./js/velha.js"></script>
+</body>
+</html>
+
+
+
+
+java
+
+
+
+ // Criando um módulo para deixar o código privado.
+(()=>{
+
+    // Declarando variáveis e objetos utilizados para o jogo.
+    const TEXTO_USUARIO_X = 'Usuário X:  ';
+    const TEXTO_USUARIO_O = 'Usuário O:  ';
+
+    let jogadorAtual = {};
+    let jogadas = [];
+    let emJogo = false;
+    let jogo = {
+        jogada1: document.querySelector('.jogo-velha-1'),
+        jogada2: document.querySelector('.jogo-velha-2'),
+        jogada3: document.querySelector('.jogo-velha-3'),
+        jogada4: document.querySelector('.jogo-velha-4'),
+        jogada5: document.querySelector('.jogo-velha-5'),
+        jogada6: document.querySelector('.jogo-velha-6'),
+        jogada7: document.querySelector('.jogo-velha-7'),
+        jogada8: document.querySelector('.jogo-velha-8'),
+        jogada9: document.querySelector('.jogo-velha-9')
+    }
+
+    let jogadorX = {
+        nome:'',
+        valor: 'X',
+        pontos: 0
+    }
+
+    let jogadorO = {
+        nome:'',
+        valor: 'O',
+        pontos: 0
+    }
+
+    var opcoes = {
+        divOpcoesJogo : document.querySelector('.opcoes-jogo'),
+        usuarioX : document.getElementById('usuario-x'),
+        usuarioO : document.getElementById('usuario-o'),
+        btnJogar : document.getElementById('btn-jogar')
+    };
+
+    var painel = {
+        painelOpcoesJogo : document.querySelector('.painel-opcoes'),
+        nomeX : document.getElementById('painel-usuario-x-nome'),
+        nomeO : document.getElementById('painel-usuario-o-nome'),
+        pontosX : document.getElementById('painel-usuario-x-pontos'),
+        pontosO : document.getElementById('painel-usuario-o-pontos'),
+        nomeProximoJogador: document.getElementById('proximo-jogador')
+    };
+
+    // Capturando os eventos de click
+    opcoes.btnJogar.addEventListener('click', () => {
+
+        jogadorX.nome = opcoes.usuarioX.value;
+        jogadorO.nome = opcoes.usuarioO.value;
+
+        if(!jogadorX.nome || !jogadorO.nome){
+            alert('Favor informar os usuarios X e O para iniciar o jogo.');
+            return;
+        }
+
+        // Alterar os nomes dos jogadores...
+        painel.nomeX.textContent = TEXTO_USUARIO_X + jogadorX.nome;
+        painel.nomeO.textContent = TEXTO_USUARIO_O + jogadorO.nome;
+
+        jogadorAtual = jogadorX;
+        painel.nomeProximoJogador.textContent = jogadorAtual.nome;
+        emJogo = true;
+
+        // Aqui tenho que esconder as opções e mostrar o painel.
+        opcoes.divOpcoesJogo.classList.add('esconder');
+        painel.painelOpcoesJogo.classList.remove('esconder');
+    });
+
+
+    jogo.jogada1.addEventListener('click', (e)=>{
+        jogada(e, 1);
+    });
+
+    jogo.jogada2.addEventListener('click', (e)=>{
+        jogada(e, 2);
+    });
+
+    jogo.jogada3.addEventListener('click', (e)=>{
+        jogada(e, 3);
+    });
+
+    jogo.jogada4.addEventListener('click', (e)=>{
+        jogada(e, 4);
+    });
+
+    jogo.jogada5.addEventListener('click', (e)=>{
+        jogada(e, 5);
+    });
+
+    jogo.jogada6.addEventListener('click', (e)=>{
+        jogada(e, 6);
+    });
+
+    jogo.jogada7.addEventListener('click', (e)=>{
+        jogada(e, 7);
+    });
+
+    jogo.jogada8.addEventListener('click', (e)=>{
+        jogada(e, 8);
+    });
+
+    jogo.jogada9.addEventListener('click', (e)=>{
+        jogada(e, 9);
+    });
+
+
+    // Funções utilizadas no jogo
+
+    function  validarJogada(){
+       let valor = jogadorAtual.valor;
+
+       if(_estrategia_1(valor) ||
+          _estrategia_2(valor) || 
+          _estrategia_3(valor) ||
+          _estrategia_4(valor) ||
+          _estrategia_5(valor) ||
+          _estrategia_6(valor) ||
+          _estrategia_7(valor) ||
+          _estrategia_8(valor)){
+
+            return true;
+        }
+
+        return false;      
+    }
+
+    function _estrategia_1(valor){
+        return (jogadas[1] == valor && jogadas[2] == valor && jogadas[3] == valor);
+    }
+    function _estrategia_2(valor){
+        return (jogadas[4] == valor && jogadas[5] == valor && jogadas[6] == valor);
+    }
+    function _estrategia_3(valor){
+        return (jogadas[7] == valor && jogadas[8] == valor && jogadas[9] == valor);
+    }
+    function _estrategia_4(valor){
+        return (jogadas[1] == valor && jogadas[4] == valor && jogadas[7] == valor);
+    }
+    function _estrategia_5(valor){
+        return (jogadas[2] == valor && jogadas[5] == valor && jogadas[8] == valor);
+    }
+    function _estrategia_6(valor){
+        return (jogadas[3] == valor && jogadas[6] == valor && jogadas[9] == valor);
+    }
+    function _estrategia_7(valor){
+        return (jogadas[1] == valor && jogadas[5] == valor && jogadas[9] == valor);
+    }
+    function _estrategia_8(valor){
+        return (jogadas[3] == valor && jogadas[5] == valor && jogadas[7] == valor);
+    }
+
+
+    function _marcarJogada(e, indice){
+        e.target.textContent = jogadorAtual.valor;
+        jogadas[indice] = jogadorAtual.valor;
+    }
+
+
+    function jogada(e, indice){
+
+        if(!emJogo || e.target.textContent){
+            return;
+        }
+
+        _marcarJogada(e, indice);
+
+
+        if(validarJogada()){
+           
+            setTimeout(() =>{
+                alert(`Parabéns, jogador ${jogadorAtual.nome} acaba de marcar ponto. \\o/`);
+                _atualizarPainel();
+                _reiniciarJogo();
+            }, 100)      
+          
+            return;
+        }
+
+        if(jogadas.filter(e => e).length == 9){
+
+            setTimeout(()=>{
+                alert('Deu velha ...');
+                _reiniciarJogo();
+            },100)
+  
+            return;
+        }
+        
+        // Continuar jogando.
+        jogadorAtual = (jogadorAtual == jogadorX) ? jogadorO : jogadorX;
+
+        painel.nomeProximoJogador.textContent = jogadorAtual.nome;
+    }
+
+    function _reiniciarJogo(){
+
+        jogadas = [];
+        jogo.jogada1.textContent = '';
+        jogo.jogada2.textContent = '';
+        jogo.jogada3.textContent = '';
+        jogo.jogada4.textContent = '';
+        jogo.jogada5.textContent = '';
+        jogo.jogada6.textContent = '';
+        jogo.jogada7.textContent = '';
+        jogo.jogada8.textContent = '';
+        jogo.jogada9.textContent = '';
+    }
+
+    function _atualizarPainel(){
+
+        jogadorAtual.pontos += 1;
+
+        if(jogadorAtual.valor == "X"){
+            painel.pontosX.textContent = jogadorAtual.pontos;
+        }else{
+            painel.pontosO.textContent = jogadorAtual.pontos;
+        }
+
+        jogadorAtual = (jogadorAtual == jogadorX) ? jogadorO : jogadorX;
+        painel.nomeProximoJogador.textContent = jogadorAtual.nome;
+    }
+ 
+})()
+
+css
+/* Aqui eu posso declarar variáveis. */
+:root{
+    --color-primary:rgb(99,140,100);
+    --color-secundary:rgb(40,100,40);
+    --color-geral: #000000;
+    --font-color: rgb(255,256,250);
+}
+
+/* Aqui estou zerando o CSS do navegador */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* meu container principal */
+.container {
+    display: grid;
+    grid-template-columns: 200px 200px 200px;
+    grid-template-rows: 20vh 20vh 20vh 20vh calc(20vh - 20px);
+    background-color: var(--color-geral);
+    color: var(--font-color);
+
+    grid-template-areas:  "h  h  h"
+                          "v1 v2 v3"
+                          "v4 v5 v6"
+                          "v7 v8 v9"
+                          "f  f  f";
+
+    grid-gap:5px;
+    justify-content: center;
+    align-content: center;
+}
+
+header {
+    grid-area: h;
+    display: grid;
+    grid-gap: 5px;
+    justify-content: start;
+    align-content: center;
+    margin-top: 6px;
+}
+
+footer{
+    grid-area: f;
+    text-align: center;
+}
+
+.container > div {
+    background-color: var(--color-primary);
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    border-radius: 10px;
+    font-size: 50px;
+    font-weight: 800;
+}
+
+.container > div:hover{
+    background-color: var(--color-secundary);
+    cursor: pointer;
+}
+
+/* Daqui para baixo CSS especifico */
+
+
+
+.opcoes-jogo{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "hgx bg"
+                         "hgo bg";
+                       
+                         justify-content: center;
+    align-content: center;
+}
+
+.header-group #usuario-x{
+    margin-bottom: 5px;
+    grid-area: hgx;
+
+}
+.header-group #usuario-O{
+    margin-bottom: 5px;
+    grid-area: hgo;
+
+}
+
+#btn-jogar{
+    grid-area: bg;
+    width: 200px;
+    height: 120px;
+    align-self: center;
+    justify-self: end;
+    background-color: var(--color-primary);
+    border:0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--font-color);
+}
+
+#btn-jogar:hover{
+    background-color: var(--color-secundary);
+    cursor: pointer;
+}
+
+.header-group > label {
+    font-size: 18px;
+}
+
+.header-group > input {
+    padding: 5px;
+    text-transform: none;
+    text-decoration: none;
+    border:0;
+    background-color: transparent;
+    border: 1px solid  var(--color-primary);
+    color: var(--color-secundary);
+    font-weight: 800;
+    font-size: 20px;
+    margin-left: 15px;
+}
+
+.painel-group{
+    font-size: 20px;
+    padding-top: 10px;
+}
+.pontos{
+    margin-left: 50px;
+    float: right;
+}
+.pontos > strong {
+    font-size: 20px;
+}
+
+.proximo-jogar{
+    margin-top: 50px;
+}
+
+.esconder{
+    display: none;
+}
